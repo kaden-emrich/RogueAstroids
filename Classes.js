@@ -1,3 +1,5 @@
+// Kaden Emrich
+
 class Angle {
     static radianstoDegrees(radians) {
         return radians * 180 / Math.PI;
@@ -19,6 +21,8 @@ class Angle {
         this.rad = radians;
         this.deg = Angle.radianstoDegrees(this.rad);
     }// constructor(radians)
+
+    
 }// class Angle
 
 class Point {
@@ -65,28 +69,54 @@ class Shape {
         this.points = points;
     }// constructor(points)
 
-    draw(x, y, direction) {
+    draw(point, direction) {
         Game.ctx.beginPath();
         let pCoordinate = new PolarCoordinate(this.points[0].getPolar().r, Angle.degree(this.points[0].getPolar().dir.deg + direction.deg));
-        let xpos = pCoordinate.getPoint().x + x;
-        let ypos = pCoordinate.getPoint().y + y;
+        let xpos = pCoordinate.getPoint().x + point.x;
+        let ypos = pCoordinate.getPoint().y + point.y;
         Game.ctx.moveTo(xpos, ypos);
 
         for(let i = 1; i < this.points.length; i++) {
             pCoordinate = new PolarCoordinate(this.points[i].getPolar().r, Angle.degree(this.points[i].getPolar().dir.deg + direction.deg));
-            xpos = pCoordinate.getPoint().x + x;
-            ypos = pCoordinate.getPoint().y + y;
+            xpos = pCoordinate.getPoint().x + point.x;
+            ypos = pCoordinate.getPoint().y + point.y;
             Game.ctx.lineTo(xpos, ypos);
         }
 
         Game.ctx.closePath();
         Game.ctx.stroke();
-    }// draw(x, y)
+    }// draw(point, direction)
 }// class Shape
 
 class Body {
-    constructor(shape, direction, location) {
+    constructor(shape, dir, pos) {
         this.shape = shape; 
-        this.location = location;
+        this.dir = dir; 
+        this.pos = pos; 
     }// constructor(shape, location)
+
+    forward(distance) {
+        this.pos.x += distance * Math.cos(this.dir.rad);
+        this.pos.y += distance * Math.sin(this.dir.rad);
+    }// forward(distance)
+
+    rotate(angle) {
+        this.dir = Angle.degree(this.dir.deg + angle.deg);
+    }// rotate(degrees)
+
+    draw() {
+        this.shape.draw(this.pos, this.dir);
+    }// draw()
 }// class Body
+
+class Entity extends Body {
+    constructor(type, shape, dir, pos) {
+        super(shape, dir, pos);
+        this.type = type;
+        this.index = Game.addEntity(this);
+    }// constructor(shape, location)
+
+    kill() {
+        Game.removeEntity(this.index);
+    }// kill()
+}// class Entity

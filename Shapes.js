@@ -5,6 +5,13 @@ var Shapes = {
         new Point(-10, -15)
     ]),
 
+    testShape : new Shape([
+        new Point(10, 10),
+        new Point(10, -10),
+        new Point(-10, -10),
+        new Point(-10, 10)
+    ]),
+
     testShape1 : new Shape([ 
         new Point(90, 115),
         new Point(100, 115),

@@ -19,7 +19,10 @@ var Game = {
     },// updateSize()
     
     updateScreen() {
-        //Game.updateSize();
+        //if(this.updateSize != null) this.updateSize();
+        if(this.updateMovement != null) this.updateMovement();
+        if(this.updateCollision != null) this.updateCollision();
+
         this.ctx.clearRect(0, 0, this.width, this.height);
         
         for(let i = 0; i < this.renderQueue.length; i++) {
@@ -38,14 +41,40 @@ var Game = {
         var tempList = [];
 
         for(let i = 0; i < index; i++) {
-            this.tempList[i] = this.renderQueue[i];
+            tempList[i] = this.renderQueue[i];
         }
-        for(let i = index + 1; i < this.renderQueue.length - 1; i++) {
-            this.tempList[i] = this.renderQueue[i + 1];
+        for(let i = index; i < this.renderQueue.length - 1; i++) {
+            tempList[i] = this.renderQueue[i + 1];
         }
 
         this.renderQueue = tempList;
-    }// removeEntity(index)
+    },// removeEntity(index)
 
     //updateInterval : setInterval(Game.updateScreen(), 1000 / 60)
+
+    updateInterval : setInterval(function() {
+        Game.updateScreen();
+    }, 1000/60)// updateInterval()
 };// class Game
+
+/*-----------------------------------*/
+
+Game.updateSize();
+Game.ctx.strokeStyle = "#fff";
+Game.ctx.lineWidth = 4;
+
+var player = new Entity("player", Shapes.ship, Angle.degree(0), new Point(100, 100), Game.ctx);
+var playerBox = Entity.fromBody(player.boundingBox, "box");
+var testEntity = new Entity("test", Shapes.testShape, Angle.degree(0), new Point(300, 300), Game.ctx);
+
+//*
+Game.updateCollision = function() {
+    playerBox.kill();
+    playerBox = Entity.fromBody(player.boundingBox, "box");
+    if(player.isTouching(testEntity)) {
+        player.color = "#f00";
+    }
+    else {
+        player.color = "#fff";
+    }
+}// Game.updateCollision()*/
